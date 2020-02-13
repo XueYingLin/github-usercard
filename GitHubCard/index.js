@@ -74,11 +74,11 @@
 </div>
 
 */
-function GitHubCard(gitUrl) {
+function GitHubCard(obj) {
   //create elements
     const card = document.createElement('div'),
           image = document.createElement('img'),
-          cardIfo = document.createElement('div'),
+          cardInfo = document.createElement('div'),
           name = document.createElement('h3'),
           userName = document.createElement('p'),
           location = document.createElement('p'),
@@ -89,50 +89,64 @@ function GitHubCard(gitUrl) {
           bio = document.createElement('p');
 
   //create text context
-  card.textContent = 'card';
-  image.src = gitUrl;
-  cardInfo.textContent = 'cardInfo';
-  name.textContent = 'name';
-  userName.textContent = 'useName';
-  location.textContent = 'location';
-  profile.textContent = 'profile';
-  a.textContent = 'a';
-  followers.textContent = 'followers';
-  following.textContent = 'following';
-  bio.textContent = 'bio';
+  
+  image.src = obj.avatar_url;
+  name.textContent = obj.name;
+  location.textContent = `Location: ${obj.location}`;
+  profile.textContent = 'Profile:';
+  a.textContent = obj.html_url;
+  a.href = obj.html_url;
+  followers.textContent = `Followers: ${obj.followers}`;
+  following.textContent = `Following: ${obj.following}`;
+  bio.textContent = `Bio: ${obj.bio}`;
+
+  //add class
+  card.classList.add('card');
+  name.classList.add('name');
+  userName.classList.add('username');
 
   //build structure
-  card.appendChild('image');
-  card.appendChild('cardInfo');
-  cardInfo.appendChild('name');
-  cardInfo.appendChild('userName');
-  cardInfo.appendChild('location');
-  cardInfo.appendChild('profile');
+  card.appendChild(image);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(name);
+  cardInfo.appendChild(userName);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(profile);
 
-  profile.appendChild('a');
+  profile.appendChild(a);
 
-  cardInfo.appendChild('followers');
-  cardInfo.appendChild('following');
-  cardInfo.appendChild('bio');
+  cardInfo.appendChild(followers);
+  cardInfo.appendChild(following);
+  cardInfo.appendChild(bio);
 
 
   return card;
 }
 
 const cards = document.querySelector('.cards');
-const followersArray = [];
+const followersArray = ['brianduff', 'josiahbailey', 'KenjiGr', 'zahidkhawaja', 'teaguehannam'];
 
 axios.get("https://api.github.com/users/XueYingLin")
 .then(response => {
   console.log(response.data)
-  followersArray = response.data.map(item => {
-    cards.appendChild(GitHubCard);
-  })
+    cards.appendChild(GitHubCard(response.data));
 })
   .catch(error => {
     console.log('the data was not returned', error)
   });
 
+//print out the followers' cards
+followersArray.forEach( item => {
+  axios.get("https://api.github.com/users/" + item)
+.then(response => {
+  console.log(response.data)
+    cards.appendChild(GitHubCard(response.data));
+})
+  .catch(error => {
+    console.log('the data was not returned', error)
+  });
+
+}) 
 /* List of LS Instructors Github username's: 
   tetondan
   dustinmyers
